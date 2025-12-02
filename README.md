@@ -495,10 +495,83 @@ Wait until all are in `Running` state.
 ### 7.6 Access Grafana via port-forward
 
 ```bash
-kubectl -n monitoring get svc | grep grafana
-# Example: monitoring-grafana   ClusterIP   10.43.x.x   <none>   80/TCP
+➜  kube-raspberry-pi git:(main) ✗ mkdir -p ./k8s/pi-monitoring
+➜  kube-raspberry-pi git:(main) ✗ cd k8s/pi-monitoring
+➜  pi-monitoring git:(main) ✗ nano values-kube-prometheus-pi.yaml
+➜  pi-monitoring git:(main) ✗ export KUBECONFIG=$HOME/.kube/config-pi-cluster
+➜  pi-monitoring git:(main) ✗ k config get-contexts 
+CURRENT   NAME      CLUSTER   AUTHINFO   NAMESPACE
+*         default   default   default    
+➜  pi-monitoring git:(main) ✗ k get nodes
+NAME         STATUS   ROLES                  AGE   VERSION
+controller   Ready    control-plane,master   36m   v1.33.6+k3s1
+worker       Ready    worker                 28m   v1.33.6+k3s1
+➜  pi-monitoring git:(main) ✗ k create monitoring
+error: Unexpected args: [monitoring]
+See 'kubectl create -h' for help and examples
+➜  pi-monitoring git:(main) ✗ k create ns monitoring
+namespace/monitoring created
+➜  pi-monitoring git:(main) ✗ helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+"prometheus-community" already exists with the same configuration, skipping
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "opensearch" chart repository
+...Successfully got an update from the "cert-exporter" chart repository
+...Successfully got an update from the "sloth" chart repository
+...Successfully got an update from the "jaegertracing" chart repository
+...Successfully got an update from the "minio" chart repository
+...Successfully got an update from the "opentelemetry" chart repository
+...Successfully got an update from the "open-telemetry" chart repository
+...Successfully got an update from the "apisix" chart repository
+...Successfully got an update from the "prometheus-blackbox" chart repository
+...Successfully got an update from the "prometheus-json-exporter" chart repository
+...Successfully got an update from the "prometheus-community" chart repository
+...Successfully got an update from the "grafana" chart repository
+...Successfully got an update from the "bitnami" chart repository
+Update Complete. ⎈Happy Helming!⎈
+➜  pi-monitoring git:(main) ✗ helm install monitoring prometheus-community/kube-prometheus-stack --namespace monitoring -f values-kube-prometheus-pi.yaml 
+NAME: monitoring
+LAST DEPLOYED: Tue Dec  2 18:17:37 2025
+NAMESPACE: monitoring
+STATUS: deployed
+REVISION: 1
+NOTES:
+kube-prometheus-stack has been installed. Check its status by running:
+  kubectl --namespace monitoring get pods -l "release=monitoring"
 
-kubectl -n monitoring port-forward svc/monitoring-grafana 3000:80
+Get Grafana 'admin' user password by running:
+
+  kubectl --namespace monitoring get secrets monitoring-grafana -o jsonpath="{.data.admin-password}" | base64 -d ; echo
+
+Access Grafana local instance:
+
+  export POD_NAME=$(kubectl --namespace monitoring get pod -l "app.kubernetes.io/name=grafana,app.kubernetes.io/instance=monitoring" -oname)
+  kubectl --namespace monitoring port-forward $POD_NAME 3000
+
+Get your grafana admin user password by running:
+
+  kubectl get secret --namespace monitoring -l app.kubernetes.io/component=admin-secret -o jsonpath="{.items[0].data.admin-password}" | base64 --decode ; echo
+
+
+Visit https://github.com/prometheus-operator/kube-prometheus for instructions on how to create & configure Alertmanager and Prometheus instances using the Operator.
+➜  pi-monitoring git:(main) ✗ k config set-context --current --namespace monitoring 
+Context "default" modified.
+➜  pi-monitoring git:(main) ✗ k get pods
+...
+➜  pi-monitoring git:(main) ✗ k get pods
+NAME                                                     READY   STATUS    RESTARTS   AGE
+alertmanager-monitoring-kube-prometheus-alertmanager-0   2/2     Running   0          2m7s
+monitoring-grafana-746c5564fc-r45bl                      2/3     Running   0          2m24s
+monitoring-kube-prometheus-operator-7b4f579bf4-78dxz     1/1     Running   0          2m24s
+monitoring-kube-state-metrics-7d6fdb9d66-4sg26           1/1     Running   0          2m24s
+monitoring-prometheus-node-exporter-cxx2c                1/1     Running   0          2m24s
+monitoring-prometheus-node-exporter-h29gw                1/1     Running   0          2m24s
+prometheus-monitoring-kube-prometheus-prometheus-0       2/2     Running   0          2m6s
+➜  pi-monitoring git:(main) ✗ oc port-forward pods/monitoring-grafana-746c5564fc-r45bl 3000:3000
+Forwarding from 127.0.0.1:3000 -> 3000
+Forwarding from [::1]:3000 -> 3000
+Handling connection for 3000
+Handling connection for 3000
 ```
 
 Now open:
