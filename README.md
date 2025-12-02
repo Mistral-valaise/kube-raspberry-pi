@@ -495,13 +495,6 @@ Wait until all are in `Running` state.
 ### 7.6 Access Grafana via port-forward
 
 ```bash
-➜  kube-raspberry-pi git:(main) ✗ mkdir -p ./k8s/pi-monitoring
-➜  kube-raspberry-pi git:(main) ✗ cd k8s/pi-monitoring
-➜  pi-monitoring git:(main) ✗ nano values-kube-prometheus-pi.yaml
-➜  pi-monitoring git:(main) ✗ export KUBECONFIG=$HOME/.kube/config-pi-cluster
-➜  pi-monitoring git:(main) ✗ k config get-contexts 
-CURRENT   NAME      CLUSTER   AUTHINFO   NAMESPACE
-*         default   default   default    
 ➜  pi-monitoring git:(main) ✗ k get nodes
 NAME         STATUS   ROLES                  AGE   VERSION
 controller   Ready    control-plane,master   36m   v1.33.6+k3s1
