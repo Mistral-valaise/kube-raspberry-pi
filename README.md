@@ -499,11 +499,11 @@ Wait until all are in `Running` state.
 NAME         STATUS   ROLES                  AGE   VERSION
 controller   Ready    control-plane,master   36m   v1.33.6+k3s1
 worker       Ready    worker                 28m   v1.33.6+k3s1
-➜  pi-monitoring git:(main) ✗ k create monitoring
-error: Unexpected args: [monitoring]
-See 'kubectl create -h' for help and examples
+
+
 ➜  pi-monitoring git:(main) ✗ k create ns monitoring
 namespace/monitoring created
+
 ➜  pi-monitoring git:(main) ✗ helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
 "prometheus-community" already exists with the same configuration, skipping
@@ -522,6 +522,8 @@ Hang tight while we grab the latest from your chart repositories...
 ...Successfully got an update from the "grafana" chart repository
 ...Successfully got an update from the "bitnami" chart repository
 Update Complete. ⎈Happy Helming!⎈
+
+
 ➜  pi-monitoring git:(main) ✗ helm install monitoring prometheus-community/kube-prometheus-stack --namespace monitoring -f values-kube-prometheus-pi.yaml 
 NAME: monitoring
 LAST DEPLOYED: Tue Dec  2 18:17:37 2025
