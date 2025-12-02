@@ -705,8 +705,6 @@ Some ideas to extend this lab:
 
 ## License
 
-## License
-
 This project is licensed under the **MIT License** – see below for details.
 
 You are free to use, modify, and distribute this project for personal or commercial purposes. Attribution is appreciated but not required.
