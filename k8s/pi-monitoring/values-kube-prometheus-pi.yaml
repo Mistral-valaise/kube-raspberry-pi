@@ -1,0 +1,67 @@
+# values-kube-prometheus-pi.yaml
+#
+# This values file is tuned for a small 2-node k3s cluster on Raspberry Pi 5.
+# It reduces resource requests/limits and keeps the setup simple.
+
+# Grafana configuration
+
+grafana:
+  adminUser: admin
+  adminPassword: admin
+  service:
+    type: ClusterIP
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 300m
+      memory: 256Mi
+
+# Prometheus configuration
+
+prometheus:
+  prometheusSpec:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+    retention: 90d
+
+# Alertmanager configuration
+
+alertmanager:
+  alertmanagerSpec:
+    replicas: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 128Mi
+
+# kube-state-metrics configuration
+
+kube-state-metrics:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+# node-exporter configuration
+
+nodeExporter:
+  resources:
+    requests:
+      cpu: 20m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 64Mi
